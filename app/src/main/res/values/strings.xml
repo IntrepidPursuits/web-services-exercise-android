@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WebServicesExercise</string>
+    <string name="submit">Submit</string>
+    <string name="username_input_hint">Enter GitHub username</string>
+</resources>
