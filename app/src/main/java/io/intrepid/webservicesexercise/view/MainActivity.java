@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View {
             String username = usernameInputView.getText().toString();
             acceptSearch(username);
         } else {
-            Toast.makeText(this, "Nice try", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.empty_search_prompt), Toast.LENGTH_SHORT).show();
         }
 
     }
