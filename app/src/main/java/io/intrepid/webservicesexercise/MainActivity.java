@@ -20,6 +20,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements Callback<GitHubUser> {
+
     private static final String TAG = MainActivity.class.getSimpleName();
     @BindView(R.id.username_input)
     EditText usernameInputView;
@@ -53,10 +54,12 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
 
     @Override
     public void onResponse(Call<GitHubUser> call, Response<GitHubUser> response) {
-        Picasso.with(this)
-                .load(response.body().getAvatarUrl())
-                .fit()
-                .into(avatarView);
+        if(response.body() != null) {
+            Picasso.with(this)
+                    .load(response.body().getAvatarUrl())
+                    .fit()
+                    .into(avatarView);
+        }
     }
 
     @Override
