@@ -1,7 +1,7 @@
 package io.intrepid.webservicesexercise;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,9 +14,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.intrepid.webservicesexercise.model.GitHubUser;
 import io.intrepid.webservicesexercise.network.GithubClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -26,18 +23,19 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String PLACE_HOLDER_URL = "https://avatars1.githubusercontent.com/u/7977903?v=3&s=400";
+
     @BindView(R.id.username_input)
     EditText usernameInputView;
     @BindView(R.id.avatar)
     ImageView avatarView;
-    private String placeHolderUrl = "https://avatars1.githubusercontent.com/u/7977903?v=3&s=400";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         Timber.plant(new Timber.DebugTree());
     }
 
@@ -48,9 +46,8 @@ public class MainActivity extends AppCompatActivity {
             Observable<GitHubUser> observable = GithubClient.getInstance().search(username);
             performRxWork(observable);
         } else {
-            Toast.makeText(this, "Nice try", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.empty_search_prompt), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void performRxWork(Observable<GitHubUser> observable){
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void call(GitHubUser gitHubUser) {
                         Log.d(TAG, "Rx java work");
-                        String imageUrl = gitHubUser == null ? placeHolderUrl : gitHubUser.getAvatarUrl();
+                        String imageUrl = gitHubUser == null ? PLACE_HOLDER_URL : gitHubUser.getAvatarUrl();
                         Picasso.with(MainActivity.this)
                                 .load(imageUrl)
                                 .fit()
@@ -68,5 +65,4 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }
