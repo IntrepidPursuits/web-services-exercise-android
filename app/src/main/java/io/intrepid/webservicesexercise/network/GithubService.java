@@ -1,7 +1,6 @@
 package io.intrepid.webservicesexercise.network;
 
 import io.intrepid.webservicesexercise.model.GitHubUser;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
