@@ -11,7 +11,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 
 /**
  * Created by abassbayo-awoyemi on 1/11/17.
@@ -40,6 +42,7 @@ public class GithubClient {
                     .build();
             service = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(client)
                     .build()
@@ -47,7 +50,7 @@ public class GithubClient {
         }
     }
 
-    public Call<GitHubUser> search(String username){
+    public Observable<GitHubUser> search(String username){
         return service.getUser(username);
     }
 }

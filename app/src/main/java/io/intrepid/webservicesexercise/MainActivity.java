@@ -17,9 +17,13 @@ import io.intrepid.webservicesexercise.network.GithubClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements Callback<GitHubUser> {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     @BindView(R.id.username_input)
@@ -41,25 +45,28 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
     public void submitButtonClicked() {
         if (usernameInputView.getText().length() > 0) {
             String username = usernameInputView.getText().toString();
-            GithubClient.getInstance().search(username).enqueue(this);
+            Observable<GitHubUser> observable = GithubClient.getInstance().search(username);
+            performRxWork(observable);
         } else {
             Toast.makeText(this, "Nice try", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    @Override
-    public void onResponse(Call<GitHubUser> call, Response<GitHubUser> response) {
-        String imageUrl = response.body() == null ? placeHolderUrl : response.body().getAvatarUrl();
-        Picasso.with(this)
-                .load(imageUrl)
-                .fit()
-                .into(avatarView);
-    }
-
-    @Override
-    public void onFailure(Call<GitHubUser> call, Throwable t) {
-        Log.d(TAG, "Failure retofitting " + t);
+    public void performRxWork(Observable<GitHubUser> observable){
+        observable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<GitHubUser>() {
+                    @Override
+                    public void call(GitHubUser gitHubUser) {
+                        Log.d(TAG, "Rx java work");
+                        String imageUrl = gitHubUser == null ? placeHolderUrl : gitHubUser.getAvatarUrl();
+                        Picasso.with(MainActivity.this)
+                                .load(imageUrl)
+                                .fit()
+                                .into(avatarView);
+                    }
+                });
     }
 
 }
