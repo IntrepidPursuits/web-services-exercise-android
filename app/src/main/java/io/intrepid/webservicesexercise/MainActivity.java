@@ -12,13 +12,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements GetGitHubUserTask.Callback {
+public class MainActivity extends AppCompatActivity implements MainActivityPresenter.View {
     @BindView(R.id.username_input)
     EditText usernameInputView;
     @BindView(R.id.avatar)
     ImageView avatarView;
 
-    private GetGitHubUserTask getGitHubUserTask;
+    private MainActivityPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,28 +26,17 @@ public class MainActivity extends AppCompatActivity implements GetGitHubUserTask
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
         Timber.plant(new Timber.DebugTree());
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (getGitHubUserTask != null) {
-            getGitHubUserTask.setCallback(null);
-        }
+        presenter = new MainActivityPresenter(this);
     }
 
     @OnClick(R.id.submit_button)
     public void submitButtonClicked() {
-        getGitHubUserTask = new GetGitHubUserTask();
-        getGitHubUserTask.setCallback(this);
-        getGitHubUserTask.execute(usernameInputView.getText().toString());
+        presenter.retrieveGithubUser(usernameInputView.getText().toString());
     }
 
-    @Override
-    public void onResult(GitHubUser gitHubUser) {
+    public void onUserRetrieved(GitHubUser gitHubUser) {
         Picasso.with(this)
                 .load(gitHubUser.getAvatarUrl())
                 .fit()
