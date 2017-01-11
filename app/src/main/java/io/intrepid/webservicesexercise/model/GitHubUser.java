@@ -1,12 +1,13 @@
-package io.intrepid.webservicesexercise;
+package io.intrepid.webservicesexercise.model;
 
 import com.google.gson.annotations.SerializedName;
 
-class GitHubUser {
+public class GitHubUser {
+
     @SerializedName("avatar_url")
     private String avatarUrl;
 
-    String getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 }
