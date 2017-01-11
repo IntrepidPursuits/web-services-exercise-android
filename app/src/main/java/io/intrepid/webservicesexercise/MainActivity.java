@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
     EditText usernameInputView;
     @BindView(R.id.avatar)
     ImageView avatarView;
+    private String placeHolderUrl = "https://avatars1.githubusercontent.com/u/7977903?v=3&s=400";
 
 
     @Override
@@ -36,17 +37,12 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
         Timber.plant(new Timber.DebugTree());
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     @OnClick(R.id.submit_button)
     public void submitButtonClicked() {
-        if(usernameInputView.getText().length() > 0) {
+        if (usernameInputView.getText().length() > 0) {
             String usernme = usernameInputView.getText().toString();
             GithubClient.getInstance().search(usernme).enqueue(this);
-        } else{
+        } else {
             Toast.makeText(this, "Nice try", Toast.LENGTH_SHORT).show();
         }
 
@@ -54,12 +50,11 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
 
     @Override
     public void onResponse(Call<GitHubUser> call, Response<GitHubUser> response) {
-        if(response.body() != null) {
-            Picasso.with(this)
-                    .load(response.body().getAvatarUrl())
-                    .fit()
-                    .into(avatarView);
-        }
+        String imageUrl = response.body() == null ? placeHolderUrl : response.body().getAvatarUrl();
+        Picasso.with(this)
+                .load(imageUrl)
+                .fit()
+                .into(avatarView);
     }
 
     @Override
