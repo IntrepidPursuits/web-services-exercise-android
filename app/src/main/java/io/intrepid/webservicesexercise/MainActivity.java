@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements Callback<GitHubUs
     @OnClick(R.id.submit_button)
     public void submitButtonClicked() {
         if (usernameInputView.getText().length() > 0) {
-            String usernme = usernameInputView.getText().toString();
-            GithubClient.getInstance().search(usernme).enqueue(this);
+            String username = usernameInputView.getText().toString();
+            GithubClient.getInstance().search(username).enqueue(this);
         } else {
             Toast.makeText(this, "Nice try", Toast.LENGTH_SHORT).show();
         }
