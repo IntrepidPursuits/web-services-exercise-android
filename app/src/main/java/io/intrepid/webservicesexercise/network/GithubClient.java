@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GithubClient {
 
-    private static final long CONNECTION_TIMEOUT = 60;
+    private static final long CONNECTION_TIMEOUT = 30;
     private static final String BASE_URL = "https://api.github.com/users/";
 
     private static GithubClient instance;
@@ -36,7 +36,6 @@ public class GithubClient {
         if (service == null) {
             Gson gson = new Gson();
             OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(null) //fixme 
                     .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
                     .build();
             service = new Retrofit.Builder()
