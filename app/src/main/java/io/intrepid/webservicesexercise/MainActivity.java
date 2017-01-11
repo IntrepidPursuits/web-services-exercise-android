@@ -21,14 +21,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
-    private static String GITHUB_BASE_URL = "https://api.github.com/";
+    private static final String GITHUB_BASE_URL = "https://api.github.com/";
+    private static final int TIMEOUT_SECONDS = 2;
+
     @BindView(R.id.username_input)
     EditText usernameInputView;
     @BindView(R.id.avatar)
     ImageView avatarView;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Timber.plant(new Timber.DebugTree());
-
     }
 
     private static GitHubApi createRestApi() {
-        OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
-        OkHttpClient httpClient = builder
-                .connectTimeout(2, TimeUnit.SECONDS)
+        OkHttpClient httpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .build();
         return new Retrofit.Builder()
                 .baseUrl(GITHUB_BASE_URL)
@@ -52,10 +49,6 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(GitHubApi.class);
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @OnClick(R.id.submit_button)
@@ -65,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GitHubUser> call, Response<GitHubUser> response) {
                 GitHubUser user = response.body();
-                Picasso.with(getApplicationContext())
+                Picasso.with(MainActivity.this)
                         .load(user.getAvatarUrl())
                         .fit()
                         .into(avatarView);
@@ -73,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<GitHubUser> call, Throwable t) {
-                t.printStackTrace();
+                Timber.e(t);
             }
         });
 
